@@ -1,0 +1,2890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Clinic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --gray: #6b7280;
+            --gray-light: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gray-light);
+            color: var(--dark);
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-back:hover {
+            background: var(--gray);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Enhanced Sticky Back Button for Mobile */
+        .sticky-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            width: 56px;
+            height: 56px;
+            display: none;
+            opacity: 0.3;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease, background-color 0.3s ease;
+        }
+
+        .sticky-back.scroll-stopped {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .sticky-back:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            opacity: 1 !important;
+        }
+
+        .sticky-back i {
+            font-size: 1.5rem;
+        }
+
+        .sticky-back span {
+            display: none;
+        }
+
+        .sticky-back::after {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 101;
+        }
+
+        .sticky-back:hover::after {
+            opacity: 1;
+        }
+
+        #stickyBackHome::after {
+            content: 'Back to Home';
+        }
+
+        #stickyBackDashboard::after {
+            content: 'Back to Dashboard';
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sticky-back.show {
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        /* Page Container */
+        .page-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .page-container.active {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        /* Navigation - Mobile First Design */
+        .navbar {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            display: none;
+            font-size: 1.5rem;
+        }
+
+        /* Desktop Navigation */
+        .desktop-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .desktop-nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .desktop-nav a:hover,
+        .desktop-nav a.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Mobile Navigation - Full Screen Overlay */
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .mobile-nav-overlay.active {
+            display: block;
+        }
+
+        .mobile-nav-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            animation: slideInLeft 0.3s ease-out;
+            overflow-y: auto;
+        }
+
+        .mobile-nav-header {
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-nav-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .mobile-nav-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-nav-links {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mobile-nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: var(--dark);
+            background: var(--gray-light);
+            border-radius: var(--radius);
+            transition: var(--transition);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .mobile-nav-links a:hover,
+        .mobile-nav-links a.active {
+            background-color: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .mobile-nav-links a i {
+            width: 24px;
+            font-size: 1.2rem;
+        }
+
+        /* Simplified Mobile Navigation - Combined Menu */
+        .mobile-user-profile {
+            padding: 15px 20px;
+            background: var(--gray-light);
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .mobile-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mobile-user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .mobile-user-info h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .mobile-user-info p {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .mobile-logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--danger);
+            color: white;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .mobile-logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .mobile-nav-footer {
+            padding: 20px;
+            text-align: center;
+            background: var(--dark);
+            color: white;
+        }
+
+        .mobile-nav-footer p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Dashboard links divider */
+        .mobile-nav-divider {
+            height: 1px;
+            background: var(--gray-light);
+            margin: 10px 0;
+        }
+
+        .mobile-nav-subtitle {
+            padding: 10px 0;
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+        }
+
+        .hero .container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Cards and Grids */
+        .doctors-grid,
+        .services-grid,
+        .stats-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .doctors-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .doctors-grid.compact {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .services-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            margin: 20px 0;
+        }
+
+        .doctor-card,
+        .service-card,
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .doctor-card:hover,
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .doctor-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .doctor-card h3 {
+            margin-bottom: 5px;
+        }
+
+        .doctor-card .specialty {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .doctor-card .availability {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .availability.available {
+            color: var(--secondary);
+        }
+
+        .availability.unavailable {
+            color: var(--danger);
+        }
+
+        .service-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .service-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 25px 20px;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: white;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 0 10px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--dark);
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .sidebar-nav a i {
+            width: 20px;
+        }
+
+        .user-profile {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--gray-light);
+            margin-top: auto;
+        }
+
+        .user-profile img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: var(--light);
+            overflow-y: auto;
+        }
+
+        /* Dashboard Header - Removed Welcome message */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header p {
+            color: var(--gray);
+            margin-bottom: 0;
+        }
+
+        /* Forms */
+        .auth-section {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .auth-tabs .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: var(--gray-light);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .auth-tabs .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .auth-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .auth-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Appointments */
+        .appointments-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .appointments-list {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .appointment-item {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .appointment-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .appointment-item:last-child {
+            border-bottom: none;
+        }
+
+        .appointment-info h3 {
+            margin-bottom: 5px;
+        }
+
+        .appointment-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-upcoming {
+            background-color: #dbeafe;
+            color: var(--primary);
+        }
+
+        .status-completed {
+            background-color: #d1fae5;
+            color: var(--secondary);
+        }
+
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: var(--danger);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        /* Login Popup Modal */
+        .login-modal .modal-content {
+            max-width: 450px;
+        }
+
+        /* About Page Styles */
+        .about-section {
+            padding: 80px 0 40px;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .about-header h1 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .about-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .about-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px 0;
+        }
+
+        .about-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            width: 50%;
+            padding: 0 40px;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            text-align: right;
+            padding-right: 60px;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            padding-left: 60px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            top: 0;
+        }
+
+        .timeline-item:nth-child(odd)::before {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even)::before {
+            left: -10px;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .timeline-content h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .timeline-content .year {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .value-card {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .value-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .value-card h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        /* Statistics Section */
+        .stats-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 60px 0;
+            margin: 60px 0;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+
+        .stat-item h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .stat-item p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .footer-section a {
+            display: block;
+            color: var(--gray-light);
+            text-decoration: none;
+            margin-bottom: 8px;
+            transition: var(--transition);
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-section p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            color: var(--gray-light);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--warning);
+            color: var(--dark);
+            padding: 15px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 10000;
+            animation: slideUp 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 400px;
+        }
+
+        .toast i {
+            font-size: 1.2rem;
+        }
+
+        .toast.error {
+            background: var(--danger);
+            color: white;
+        }
+
+        .toast.success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .toast.info {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Login Required Overlay */
+        .login-required {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .login-required-content {
+            background: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .login-required-content h2 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .login-required-content p {
+            margin-bottom: 25px;
+            color: var(--gray);
+        }
+
+        /* Responsive Design - MOBILE FIRST */
+        @media (max-width: 768px) {
+            /* Hide desktop navigation, show mobile toggle */
+            .desktop-nav {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .logo span {
+                display: none;
+            }
+
+            .logo-icon {
+                display: block;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            /* Show sticky back button on mobile */
+            .sticky-back {
+                display: flex;
+            }
+
+            /* Hide regular back button on mobile */
+            .btn-back {
+                display: none;
+            }
+
+            /* Dashboard mobile adjustments */
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main-content {
+                padding: 80px 20px 20px;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+
+            /* Stats grid mobile */
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Appointment item mobile */
+            .appointment-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            /* Toast mobile */
+            .toast {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+                bottom: 90px;
+            }
+
+            /* About Page Responsive */
+            .about-timeline::before {
+                left: 30px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding: 0 0 0 80px;
+                text-align: left !important;
+                left: 0 !important;
+            }
+
+            .timeline-item:nth-child(odd),
+            .timeline-item:nth-child(even) {
+                padding-left: 80px;
+                padding-right: 20px;
+            }
+
+            .timeline-item:nth-child(odd)::before,
+            .timeline-item:nth-child(even)::before {
+                left: 20px;
+                right: auto;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .about-header h1 {
+                font-size: 2rem;
+            }
+
+            /* Doctor cards mobile */
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Modal mobile */
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+            }
+
+            /* Footer mobile */
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            /* Container padding mobile */
+            .container {
+                padding: 0 15px;
+            }
+
+            /* Enhanced sticky back button for mobile */
+            .sticky-back {
+                bottom: 25px;
+                left: 25px;
+                opacity: 0.3;
+            }
+
+            .sticky-back.scroll-stopped {
+                opacity: 1;
+            }
+
+            .sticky-back:hover {
+                opacity: 1 !important;
+            }
+
+            /* Add bottom padding to pages to ensure content isn't covered */
+            #about-page .about-section,
+            #doctors-page .container,
+            #appointments-page .main-content {
+                padding-bottom: 100px;
+            }
+
+            /* Adjust toast position to not overlap with sticky back button */
+            .toast {
+                bottom: 90px;
+            }
+
+            /* Hero section mobile adjustments */
+            .hero .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (min-width: 769px) {
+            /* Hide mobile navigation on desktop */
+            .mobile-nav-overlay {
+                display: none !important;
+            }
+
+            .mobile-menu-toggle {
+                display: none;
+            }
+
+            .logo span {
+                display: inline;
+            }
+
+            /* Hide sticky back button on desktop */
+            .sticky-back {
+                display: none !important;
+            }
+
+            /* Show regular back button on desktop */
+            .btn-back {
+                display: inline-flex;
+            }
+
+            /* Reset toast position on desktop */
+            .toast {
+                bottom: 20px;
+                left: auto;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .auth-container {
+                padding: 30px 20px;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+
+            .doctors-grid,
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .login-required-content {
+                padding: 30px 20px;
+            }
+
+            .about-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.3rem;
+            }
+
+            /* Enhanced sticky back button for very small screens */
+            .sticky-back {
+                bottom: 20px;
+                left: 20px;
+                width: 50px;
+                height: 50px;
+                padding: 14px;
+            }
+
+            .sticky-back i {
+                font-size: 1.3rem;
+            }
+
+            .sticky-back::after {
+                top: -35px;
+                font-size: 0.7rem;
+                padding: 5px 10px;
+            }
+
+            /* Adjust toast position for very small screens */
+            .toast {
+                bottom: 85px;
+                left: 15px;
+                right: 15px;
+            }
+        }
+
+        /* Add bottom margin to ensure content isn't hidden behind sticky button */
+        #about-page .container,
+        #doctors-page .container,
+        #appointments-page .main-content {
+            padding-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            #about-page .container,
+            #doctors-page .container,
+            #appointments-page .main-content {
+                padding-bottom: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo" onclick="navigateTo('home')">
+                <i class="fas fa-hospital logo-icon"></i>
+                <span>Medi<span>Care</span></span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <div class="desktop-nav">
+                <a href="#" onclick="navigateTo('home')" class="active">Home</a>
+                <a href="#" onclick="navigateTo('about')">About</a>
+                <a href="#" onclick="navigateTo('doctors')">Doctors</a>
+                <a href="#" onclick="checkAuthAndNavigate('dashboard')">Dashboard</a>
+                <a href="#" onclick="checkAuthAndNavigate('appointments')">Appointments</a>
+                <a href="#" class="btn" id="loginBtn" onclick="handleLoginButton()">
+                    <i class="fas fa-sign-in-alt"></i> <span id="loginBtnText">Login</span>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" onclick="openMobileNav()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Overlay - SIMPLIFIED VERSION -->
+    <div id="mobileNavOverlay" class="mobile-nav-overlay">
+        <div class="mobile-nav-content">
+            <div class="mobile-nav-header">
+                <h2><i class="fas fa-hospital"></i> MediCare</h2>
+                <button class="mobile-nav-close" onclick="closeMobileNav()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mobile-nav-links">
+                <!-- User Profile (Only when logged in) -->
+                <div id="mobileUserProfile" class="mobile-user-profile">
+                    <div class="mobile-user-info">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" 
+                             alt="User" id="mobileUserAvatar" class="mobile-user-avatar">
+                        <div>
+                            <h4 id="mobileUserName">John Doe</h4>
+                            <p id="mobileUserEmail">kcye@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Navigation Links -->
+                <a href="#" onclick="navigateToMobile('home')" class="active">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="#" onclick="navigateToMobile('about')">
+                    <i class="fas fa-info-circle"></i> About
+                </a>
+                <a href="#" onclick="navigateToMobile('doctors')">
+                    <i class="fas fa-user-md"></i> Doctors
+                </a>
+                
+                <!-- Dashboard Links (Only when logged in) -->
+                <a href="#" onclick="checkAuthAndNavigateMobile('dashboard')" id="mobileDashboardLink">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#" onclick="checkAuthAndNavigateMobile('appointments')" id="mobileAppointmentsLink">
+                    <i class="fas fa-calendar-check"></i> Appointments
+                </a>
+                
+                <!-- Login/Logout Button -->
+                <a href="#" onclick="handleMobileLogin()" id="mobileLoginBtn">
+                    <i class="fas fa-sign-in-alt"></i> <span id="mobileLoginText">Login</span>
+                </a>
+                
+                <!-- Logout Button (Only when logged in) -->
+                <a href="#" onclick="handleMobileLogout()" id="mobileLogoutBtn" class="mobile-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+            
+            <div class="mobile-nav-footer">
+                <p>© 2024 MediCare Clinic</p>
+                <p>Quality Healthcare Since 2010</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Sticky Back Buttons (Icon Only for Mobile) -->
+    <a href="#" class="sticky-back" id="stickyBackHome" onclick="navigateTo('home')" style="display: none;">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Home</span>
+    </a>
+    <a href="#" class="sticky-back" id="stickyBackDashboard" onclick="navigateTo('dashboard')" style="display: none;">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Dashboard</span>
+    </a>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page-container active">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Quality Healthcare Made Simple</h1>
+                    <p>Book appointments with expert doctors, manage your health records, and get the care you deserve - all in one place.</p>
+                    <button class="btn btn-primary" onclick="checkAuthAndBook()">Book Appointment Now</button>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1516549655669-dfbf10d0c9b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Healthcare">
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Doctors -->
+        <section class="featured-doctors">
+            <div class="container">
+                <h2>Our Expert Doctors</h2>
+                <div class="doctors-grid" id="home-doctors">
+                    <!-- Doctors loaded via JavaScript -->
+                </div>
+                <button class="btn" onclick="navigateTo('doctors')">View All Doctors</button>
+            </div>
+        </section>
+
+        <!-- Services -->
+        <section class="services">
+            <div class="container">
+                <h2>Our Services</h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <h3>Easy Appointment</h3>
+                        <p>Book appointments with doctors in just a few clicks</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-user-md"></i>
+                        <h3>Expert Doctors</h3>
+                        <p>Consult with certified and experienced medical professionals</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>24/7 Availability</h3>
+                        <p>Check doctor availability in real-time</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-history"></i>
+                        <h3>History Tracking</h3>
+                        <p>Keep track of all your appointments and medical history</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>MediCare Clinic</h3>
+                        <p>Providing quality healthcare services since 2010.</p>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Quick Links</h3>
+                        <a href="#" onclick="navigateTo('home')">Home</a>
+                        <a href="#" onclick="navigateTo('about')">About</a>
+                        <a href="#" onclick="navigateTo('doctors')">Doctors</a>
+                        <a href="#" onclick="checkAuthAndNavigate('dashboard')">Dashboard</a>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Contact Us</h3>
+                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@medicare.com</p>
+                    </div>
+                </div>
+                <p class="copyright">© 2024 MediCare Clinic. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- About Page -->
+    <div id="about-page" class="page-container">
+        <div class="container">
+            <button class="btn btn-back" onclick="navigateTo('home')">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </button>
+            <section class="about-section">
+                <div class="about-header">
+                    <h1>About MediCare Clinic</h1>
+                    <p>For over a decade, we've been committed to providing exceptional healthcare services with compassion, innovation, and excellence.</p>
+                </div>
+
+                <div class="about-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content slide-in">
+                            <span class="year">2010</span>
+                            <h3>Our Humble Beginnings</h3>
+                            <p>MediCare Clinic started as a small family practice with just 3 doctors and a vision to make quality healthcare accessible to everyone.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content slide-in">
+                            <span class="year">2013</span>
+                            <h3>Expansion & Growth</h3>
+                            <p>We expanded our facility and added specialized departments including Cardiology, Neurology, and Pediatrics.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content slide-in">
+                            <span class="year">2016</span>
+                            <h3>Digital Transformation</h3>
+                            <p>Launched our online appointment system, becoming one of the first clinics in the region to offer digital healthcare management.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content slide-in">
+                            <span class="year">2020</span>
+                            <h3>Pandemic Response</h3>
+                            <p>Implemented telemedicine services and safety protocols to continue serving our community during challenging times.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content slide-in">
+                            <span class="year">2024</span>
+                            <h3>State-of-the-Art Facility</h3>
+                            <p>Now serving over 50,000 patients annually with 25+ specialized doctors and cutting-edge medical technology.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <div class="container">
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <h2>14+</h2>
+                                <p>Years of Excellence</p>
+                            </div>
+                            <div class="stat-item">
+                                <h2>25+</h2>
+                                <p>Expert Doctors</p>
+                            </div>
+                            <div class="stat-item">
+                                <h2>50k+</h2>
+                                <p>Patients Served</p>
+                            </div>
+                            <div class="stat-item">
+                                <h2>98%</h2>
+                                <p>Patient Satisfaction</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 style="text-align: center; margin: 60px 0 30px;">Our Core Values</h2>
+                <div class="values-grid">
+                    <div class="value-card slide-in">
+                        <i class="fas fa-heart"></i>
+                        <h3>Compassion</h3>
+                        <p>We treat every patient with empathy, kindness, and respect, understanding that healthcare is about more than just treatment.</p>
+                    </div>
+                    <div class="value-card slide-in">
+                        <i class="fas fa-star"></i>
+                        <h3>Excellence</h3>
+                        <p>We maintain the highest standards of medical care through continuous learning and state-of-the-art technology.</p>
+                    </div>
+                    <div class="value-card slide-in">
+                        <i class="fas fa-handshake"></i>
+                        <h3>Integrity</h3>
+                        <p>We practice honest, ethical medicine and maintain transparent communication with our patients.</p>
+                    </div>
+                    <div class="value-card slide-in">
+                        <i class="fas fa-users"></i>
+                        <h3>Community</h3>
+                        <p>We're committed to serving our community through outreach programs and accessible healthcare solutions.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard-page" class="page-container">
+        <div class="dashboard-container">
+            <!-- Mobile Menu Toggle for Dashboard -->
+            <button class="btn btn-primary" onclick="toggleSidebar()" style="position: fixed; top: 20px; left: 20px; z-index: 1001; display: none;" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-hospital"></i> Medi<span>Care</span></h2>
+                    <p>Patient Dashboard</p>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="#" onclick="navigateTo('dashboard')" class="active">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="#" onclick="navigateTo('appointments')">
+                        <i class="fas fa-calendar-check"></i> Appointments
+                    </a>
+                    <a href="#" onclick="navigateTo('doctors')">
+                        <i class="fas fa-user-md"></i> Doctors
+                    </a>
+                    <a href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </nav>
+                <div class="user-profile">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="User" id="userAvatar">
+                    <h3 id="userName">Loading...</h3>
+                    <p id="userEmail">Loading...</p>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Removed: Welcome back header and New Appointment button -->
+                <!-- Stats Cards Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <h3 id="upcomingAppointments">2</h3>
+                            <p>Upcoming Appointments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-history"></i>
+                        <div>
+                            <h3 id="totalAppointments">3</h3>
+                            <p>Total Appointments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-user-md"></i>
+                        <div>
+                            <h3 id="doctorsSeen">2</h3>
+                            <p>Doctors Consulted</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Appointments -->
+                <section class="dashboard-section">
+                    <h2>Upcoming Appointments</h2>
+                    <div class="appointments-list" id="dashboardAppointments">
+                        <!-- Appointments loaded via JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Available Doctors -->
+                <section class="dashboard-section">
+                    <h2>Available Doctors Today</h2>
+                    <div class="doctors-grid compact" id="dashboardDoctors">
+                        <!-- Doctors loaded via JavaScript -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Doctors Page -->
+    <div id="doctors-page" class="page-container">
+        <div class="container">
+            <button class="btn btn-back" onclick="navigateTo('home')">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </button>
+            <h1 style="margin: 20px 0;">Our Medical Team</h1>
+            <p style="margin-bottom: 30px; color: var(--gray);">Browse our team of expert doctors and check their availability</p>
+            
+            <div class="doctors-grid" id="doctorsList">
+                <!-- Doctors loaded via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointments Page -->
+    <div id="appointments-page" class="page-container">
+        <div class="dashboard-container">
+            <!-- Mobile Menu Toggle for Appointments -->
+            <button class="btn btn-primary" onclick="toggleAppointmentsSidebar()" style="position: fixed; top: 20px; left: 20px; z-index: 1001; display: none;" id="appointmentsMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Sidebar -->
+            <aside class="sidebar" id="appointmentsSidebar">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-hospital"></i> Medi<span>Care</span></h2>
+                    <p>Appointments</p>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="#" onclick="navigateTo('dashboard')">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="#" onclick="navigateTo('appointments')" class="active">
+                        <i class="fas fa-calendar-check"></i> Appointments
+                    </a>
+                    <a href="#" onclick="navigateTo('doctors')">
+                        <i class="fas fa-user-md"></i> Doctors
+                    </a>
+                    <a href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </nav>
+            </aside>
+
+            <main class="main-content">
+                <button class="btn btn-back" onclick="navigateTo('dashboard')" style="margin-bottom: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+                
+                <header class="dashboard-header">
+                    <h1>Manage Appointments</h1>
+                    <button class="btn btn-primary" onclick="openBookingModal()">
+                        <i class="fas fa-plus"></i> Book New Appointment
+                    </button>
+                </header>
+
+                <!-- Appointments Tabs -->
+                <div class="appointments-tabs">
+                    <button class="tab-btn active" onclick="filterAppointments('upcoming')">Upcoming</button>
+                    <button class="tab-btn" onclick="filterAppointments('completed')">Completed</button>
+                    <button class="tab-btn" onclick="filterAppointments('cancelled')">Cancelled</button>
+                </div>
+
+                <div class="appointments-list" id="appointmentsList">
+                    <!-- Appointments loaded via JavaScript -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Login Popup Modal -->
+    <div id="loginModal" class="modal login-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
+                <button class="tab-btn" onclick="switchAuthTab('register')">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active" onsubmit="login(event)">
+                <h2>Welcome Back</h2>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="kcye@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                <p class="auth-link">Don't have an account? <a href="#" onclick="switchAuthTab('register')">Register here</a></p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" onsubmit="register(event)">
+                <h2>Create Account</h2>
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPhone">Phone Number</label>
+                    <input type="tel" id="registerPhone" placeholder="Enter your phone number" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+                <p class="auth-link">Already have an account? <a href="#" onclick="switchAuthTab('login')">Login here</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Appointment Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBookingModal()">&times;</span>
+            <h2>Book New Appointment</h2>
+            <form id="bookingForm" onsubmit="bookAppointment(event)">
+                <div class="form-group">
+                    <label for="doctorSelect">Select Doctor</label>
+                    <select id="doctorSelect" required>
+                        <option value="">Choose a doctor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentDate">Date</label>
+                    <input type="date" id="appointmentDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentTime">Time</label>
+                    <select id="appointmentTime" required>
+                        <option value="">Select time</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="symptoms">Symptoms / Reason</label>
+                    <textarea id="symptoms" rows="3" placeholder="Describe your symptoms"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Book Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Required Overlay -->
+    <div id="loginRequiredOverlay" class="login-required hidden">
+        <div class="login-required-content">
+            <i class="fas fa-lock" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
+            <h2>Login Required</h2>
+            <p id="loginRequiredMessage">Please login to access this feature. If you don't have an account, you can register for free.</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 25px;">
+                <button class="btn btn-primary" onclick="openLoginModalFromOverlay()">
+                    <i class="fas fa-sign-in-alt"></i> Login Now
+                </button>
+                <button class="btn" onclick="closeLoginRequired()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script>
+        // Mock Data Storage
+        const mockData = {
+            users: JSON.parse(localStorage.getItem('users')) || [
+                { id: 1, name: 'John Doe', email: 'kcye@gmail.com', password: 'aclf381', phone: '123-456-7890', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80' }
+            ],
+            doctors: [
+                { 
+                    id: 1, 
+                    name: 'Dr. Sarah Johnson', 
+                    specialty: 'Cardiologist', 
+                    availability: true, 
+                    image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+                    alt: 'Dr. Sarah Johnson - Cardiologist specializing in heart health and cardiovascular diseases'
+                },
+                { 
+                    id: 2, 
+                    name: 'Dr. Michael Chen', 
+                    specialty: 'Neurologist', 
+                    availability: true, 
+                    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+                    alt: 'Dr. Michael Chen - Neurologist expert in brain and nervous system disorders'
+                },
+                { 
+                    id: 3, 
+                    name: 'Dr. Emily Williams', 
+                    specialty: 'Pediatrician', 
+                    availability: false, 
+                    image: 'https://images.unsplash.com/photo-1594824434345-4c78b5c10d47?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+                    alt: 'Dr. Emily Williams - Pediatrician providing care for infants, children, and adolescents'
+                },
+                { 
+                    id: 4, 
+                    name: 'Dr. Robert Brown', 
+                    specialty: 'Orthopedic Surgeon', 
+                    availability: true, 
+                    image: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+                    alt: 'Dr. Robert Brown - Orthopedic Surgeon specializing in bone, joint, and muscle treatments'
+                },
+                { 
+                    id: 5, 
+                    name: 'Dr. Lisa Garcia', 
+                    specialty: 'Dermatologist', 
+                    availability: true, 
+                    image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+                    alt: 'Dr. Lisa Garcia - Dermatologist expert in skin, hair, and nail conditions'
+                },
+                { 
+                    id: 6, 
+                    name: 'Dr. David Wilson', 
+                    specialty: 'General Physician', 
+                    availability: true, 
+                    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+                    alt: 'Dr. David Wilson - General Physician providing comprehensive primary care'
+                }
+            ],
+            appointments: JSON.parse(localStorage.getItem('appointments')) || [
+                { id: 1, userId: 1, doctorId: 1, doctorName: 'Dr. Sarah Johnson', doctorAlt: 'Cardiologist', date: '2024-12-10', time: '10:00 AM', symptoms: 'Chest pain and shortness of breath', status: 'upcoming' },
+                { id: 2, userId: 1, doctorId: 2, doctorName: 'Dr. Michael Chen', doctorAlt: 'Neurologist', date: '2024-12-05', time: '2:00 PM', symptoms: 'Headache and dizziness', status: 'completed' },
+                { id: 3, userId: 1, doctorId: 4, doctorName: 'Dr. Robert Brown', doctorAlt: 'Orthopedic Surgeon', date: '2024-12-15', time: '11:30 AM', symptoms: 'Knee pain', status: 'upcoming' }
+            ]
+        };
+
+        // Global State
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        let currentPage = 'home';
+        let scrollTimer;
+
+        // DOM Elements
+        const pages = {
+            home: document.getElementById('home-page'),
+            about: document.getElementById('about-page'),
+            dashboard: document.getElementById('dashboard-page'),
+            doctors: document.getElementById('doctors-page'),
+            appointments: document.getElementById('appointments-page')
+        };
+
+        // Sticky back button elements
+        const stickyBackHome = document.getElementById('stickyBackHome');
+        const stickyBackDashboard = document.getElementById('stickyBackDashboard');
+
+        // Initialize the application
+        function init() {
+            updateNavigation();
+            loadDoctors();
+            if (currentUser) {
+                updateDashboard();
+            }
+            
+            // Update login button text based on auth state
+            updateLoginButton();
+            updateMobileNav();
+            
+            // Set initial sticky back button visibility
+            updateStickyBackButtons();
+        }
+
+        // Update mobile navigation based on login state
+        function updateMobileNav() {
+            const mobileUserProfile = document.getElementById('mobileUserProfile');
+            const mobileDashboardLink = document.getElementById('mobileDashboardLink');
+            const mobileAppointmentsLink = document.getElementById('mobileAppointmentsLink');
+            const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+            const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+            const mobileUserName = document.getElementById('mobileUserName');
+            const mobileUserEmail = document.getElementById('mobileUserEmail');
+            const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+            const mobileLoginText = document.getElementById('mobileLoginText');
+            
+            if (currentUser) {
+                // Show user profile, dashboard links, and logout button
+                mobileUserProfile.style.display = 'block';
+                mobileDashboardLink.style.display = 'flex';
+                mobileAppointmentsLink.style.display = 'flex';
+                mobileLoginBtn.style.display = 'none';
+                mobileLogoutBtn.style.display = 'flex';
+                mobileLoginText.textContent = 'Logout';
+                
+                // Update user info
+                mobileUserName.textContent = currentUser.name;
+                mobileUserEmail.textContent = currentUser.email;
+                mobileUserAvatar.src = currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80';
+            } else {
+                // Hide user profile, dashboard links, and logout button
+                mobileUserProfile.style.display = 'none';
+                mobileDashboardLink.style.display = 'none';
+                mobileAppointmentsLink.style.display = 'none';
+                mobileLoginBtn.style.display = 'flex';
+                mobileLogoutBtn.style.display = 'none';
+                mobileLoginText.textContent = 'Login';
+            }
+        }
+
+        // Enhanced scroll handler for sticky back button
+        function handleScroll() {
+            // Show sticky back button with reduced opacity while scrolling
+            if (currentPage === 'about' || currentPage === 'doctors') {
+                stickyBackHome.style.display = 'flex';
+                stickyBackHome.classList.remove('scroll-stopped');
+                stickyBackHome.classList.add('show');
+                stickyBackHome.style.opacity = '0.3';
+            } else if (currentPage === 'appointments') {
+                stickyBackDashboard.style.display = 'flex';
+                stickyBackDashboard.classList.remove('scroll-stopped');
+                stickyBackDashboard.classList.add('show');
+                stickyBackDashboard.style.opacity = '0.3';
+            }
+            
+            // Clear the previous timer
+            clearTimeout(scrollTimer);
+            
+            // Set a new timer to detect when scrolling stops
+            scrollTimer = setTimeout(() => {
+                // User has stopped scrolling for 300ms
+                if (currentPage === 'about' || currentPage === 'doctors') {
+                    stickyBackHome.classList.add('scroll-stopped');
+                    stickyBackHome.style.opacity = '1';
+                } else if (currentPage === 'appointments') {
+                    stickyBackDashboard.classList.add('scroll-stopped');
+                    stickyBackDashboard.style.opacity = '1';
+                }
+            }, 300);
+        }
+
+        // Update sticky back buttons based on current page
+        function updateStickyBackButtons() {
+            // Hide all sticky back buttons first
+            stickyBackHome.style.display = 'none';
+            stickyBackDashboard.style.display = 'none';
+            stickyBackHome.classList.remove('show', 'scroll-stopped');
+            stickyBackDashboard.classList.remove('show', 'scroll-stopped');
+            
+            // Show appropriate sticky back button based on current page
+            if (currentPage === 'about' || currentPage === 'doctors') {
+                stickyBackHome.style.display = 'flex';
+                stickyBackHome.classList.add('show');
+                stickyBackHome.classList.add('scroll-stopped');
+                stickyBackHome.style.opacity = '1';
+            } else if (currentPage === 'appointments') {
+                stickyBackDashboard.style.display = 'flex';
+                stickyBackDashboard.classList.add('show');
+                stickyBackDashboard.classList.add('scroll-stopped');
+                stickyBackDashboard.style.opacity = '1';
+            } else if (currentPage === 'dashboard') {
+                stickyBackDashboard.style.display = 'none';
+            }
+        }
+
+        // Mobile Navigation Functions
+        function openMobileNav() {
+            document.getElementById('mobileNavOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileNav() {
+            document.getElementById('mobileNavOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function navigateToMobile(page) {
+            closeMobileNav();
+            setTimeout(() => {
+                navigateTo(page);
+            }, 300);
+        }
+
+        function checkAuthAndNavigateMobile(page) {
+            closeMobileNav();
+            setTimeout(() => {
+                checkAuthAndNavigate(page);
+            }, 300);
+        }
+
+        function handleMobileLogin() {
+            closeMobileNav();
+            setTimeout(() => {
+                handleLoginButton();
+            }, 300);
+        }
+
+        function handleMobileLogout() {
+            closeMobileNav();
+            setTimeout(() => {
+                logout();
+            }, 300);
+        }
+
+        // Navigation functions
+        function navigateTo(page) {
+            // Update current page
+            currentPage = page;
+            
+            // Hide all pages
+            Object.values(pages).forEach(p => {
+                p.classList.remove('active');
+            });
+            
+            // Show target page
+            pages[page].classList.add('active');
+            
+            // Update navigation
+            updateNavigation();
+            
+            // Update sticky back buttons
+            updateStickyBackButtons();
+            
+            // Load page-specific data
+            if (page === 'home') {
+                loadHomeDoctors();
+            } else if (page === 'dashboard' && currentUser) {
+                updateDashboard();
+            } else if (page === 'doctors') {
+                loadAllDoctors();
+            } else if (page === 'appointments' && currentUser) {
+                loadAppointments();
+            }
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+            
+            // Trigger scroll handler to update UI
+            setTimeout(handleScroll, 100);
+        }
+
+        function checkAuthAndNavigate(page) {
+            if (!currentUser) {
+                let message = 'Please login to access this feature.';
+                if (page === 'dashboard') {
+                    message = 'Please login to access your dashboard.';
+                } else if (page === 'appointments') {
+                    message = 'Please login to manage your appointments.';
+                }
+                showLoginRequired(message);
+                return;
+            }
+            navigateTo(page);
+        }
+
+        function checkAuthAndBook() {
+            if (!currentUser) {
+                showLoginRequired('Please login to book an appointment.');
+                return;
+            }
+            openBookingModal();
+        }
+
+        function updateNavigation() {
+            const desktopLinks = document.querySelectorAll('.desktop-nav a:not(.btn)');
+            const mobileLinks = document.querySelectorAll('.mobile-nav-links a:not(.mobile-logout-btn)');
+            
+            // Update desktop navigation
+            desktopLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.textContent.toLowerCase().includes(currentPage)) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Update mobile navigation
+            mobileLinks.forEach(link => {
+                link.classList.remove('active');
+                const linkText = link.textContent.toLowerCase();
+                const linkIcon = link.querySelector('i')?.className || '';
+                
+                if (currentPage === 'home' && (linkText.includes('home') || linkIcon.includes('fa-home'))) {
+                    link.classList.add('active');
+                } else if (currentPage === 'about' && (linkText.includes('about') || linkIcon.includes('fa-info-circle'))) {
+                    link.classList.add('active');
+                } else if (currentPage === 'doctors' && (linkText.includes('doctors') || linkIcon.includes('fa-user-md'))) {
+                    link.classList.add('active');
+                } else if (currentPage === 'dashboard' && (linkText.includes('dashboard') || linkIcon.includes('fa-tachometer-alt'))) {
+                    link.classList.add('active');
+                } else if (currentPage === 'appointments' && (linkText.includes('appointments') || linkIcon.includes('fa-calendar-check'))) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function handleLoginButton() {
+            if (currentUser) {
+                logout();
+            } else {
+                openLoginModal();
+            }
+        }
+
+        function updateLoginButton() {
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            
+            if (currentUser) {
+                loginBtnText.textContent = 'Logout';
+                loginBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> <span id="loginBtnText">Logout</span>';
+            } else {
+                loginBtnText.textContent = 'Login';
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span id="loginBtnText">Login</span>';
+            }
+        }
+
+        // Mobile menu toggle for dashboard
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function toggleAppointmentsSidebar() {
+            const sidebar = document.getElementById('appointmentsSidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Modal functions
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('loginEmail').focus();
+        }
+
+        function openLoginModalFromOverlay() {
+            closeLoginRequired();
+            setTimeout(() => {
+                openLoginModal();
+            }, 300);
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+            document.getElementById('loginForm').reset();
+            document.getElementById('registerForm').reset();
+            switchAuthTab('login');
+        }
+
+        function openBookingModal() {
+            if (!currentUser) {
+                showLoginRequired('Please login to book an appointment.');
+                return;
+            }
+            
+            document.getElementById('bookingModal').classList.add('active');
+            populateTimeSlots();
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+            document.getElementById('bookingForm').reset();
+        }
+
+        // Login Required Overlay
+        function showLoginRequired(message = 'Please login to access this feature.') {
+            const overlay = document.getElementById('loginRequiredOverlay');
+            const messageElement = document.getElementById('loginRequiredMessage');
+            messageElement.textContent = message;
+            overlay.classList.remove('hidden');
+            
+            // Prevent scrolling when overlay is shown
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLoginRequired() {
+            document.getElementById('loginRequiredOverlay').classList.add('hidden');
+            
+            // Restore scrolling
+            document.body.style.overflow = 'auto';
+        }
+
+        // Authentication functions
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabs = document.querySelectorAll('.auth-tabs .tab-btn');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+                tabs[0].classList.add('active');
+            } else {
+                loginForm.classList.remove('active');
+                registerForm.classList.add('active');
+                tabs[1].classList.add('active');
+            }
+        }
+
+        function login(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = mockData.users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showToast('Login successful!', 'success');
+                
+                // Close all modals and overlays
+                closeLoginModal();
+                closeLoginRequired();
+                
+                // Update UI
+                updateLoginButton();
+                updateMobileNav();
+                updateDashboard();
+                
+                // Navigate to dashboard after delay
+                setTimeout(() => {
+                    navigateTo('dashboard');
+                }, 500);
+            } else {
+                showToast('Invalid email or password', 'error');
+            }
+        }
+
+        function register(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const phone = document.getElementById('registerPhone').value;
+            
+            // Check if user already exists
+            if (mockData.users.some(u => u.email === email)) {
+                showToast('User already exists with this email', 'error');
+                return;
+            }
+            
+            const newUser = {
+                id: mockData.users.length + 1,
+                name,
+                email,
+                password,
+                phone,
+                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
+            };
+            
+            mockData.users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(mockData.users));
+            
+            showToast('Registration successful! Please login.', 'success');
+            switchAuthTab('login');
+            
+            // Clear form
+            document.getElementById('registerForm').reset();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            showToast('Logged out successfully', 'info');
+            updateLoginButton();
+            updateMobileNav();
+            navigateTo('home');
+        }
+
+        // Doctor functions
+        function loadDoctors() {
+            // This function loads doctors into various parts of the app
+            loadHomeDoctors();
+            loadAllDoctors();
+            loadDashboardDoctors();
+            populateDoctorSelect();
+        }
+
+        function loadHomeDoctors() {
+            const container = document.getElementById('home-doctors');
+            if (!container) return;
+            
+            container.innerHTML = mockData.doctors.slice(0, 4).map(doctor => `
+                <div class="doctor-card slide-in">
+                    <img src="${doctor.image}" alt="${doctor.alt}">
+                    <h3>${doctor.name}</h3>
+                    <p class="specialty">${doctor.specialty}</p>
+                    <p class="availability ${doctor.availability ? 'available' : 'unavailable'}">
+                        <i class="fas fa-circle"></i>
+                        ${doctor.availability ? 'Available Today' : 'Not Available'}
+                    </p>
+                    <button class="btn btn-small" onclick="checkAuthAndBookWithDoctor(${doctor.id})" style="margin-top: 10px; width: 100%;">
+                        Book Appointment
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function loadAllDoctors() {
+            const container = document.getElementById('doctorsList');
+            if (!container) return;
+            
+            container.innerHTML = mockData.doctors.map(doctor => `
+                <div class="doctor-card slide-in">
+                    <img src="${doctor.image}" alt="${doctor.alt}">
+                    <h3>${doctor.name}</h3>
+                    <p class="specialty">${doctor.specialty}</p>
+                    <p class="availability ${doctor.availability ? 'available' : 'unavailable'}">
+                        <i class="fas fa-circle"></i>
+                        ${doctor.availability ? 'Available Today' : 'Not Available'}
+                    </p>
+                    <button class="btn btn-small" onclick="checkAuthAndBookWithDoctor(${doctor.id})" style="margin-top: 10px; width: 100%;">
+                        Book Appointment
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function loadDashboardDoctors() {
+            const container = document.getElementById('dashboardDoctors');
+            if (!container || !currentUser) return;
+            
+            const availableDoctors = mockData.doctors.filter(d => d.availability);
+            container.innerHTML = availableDoctors.slice(0, 4).map(doctor => `
+                <div class="doctor-card slide-in">
+                    <img src="${doctor.image}" alt="${doctor.alt}">
+                    <h3>${doctor.name}</h3>
+                    <p class="specialty">${doctor.specialty}</p>
+                    <button class="btn btn-small" onclick="openBookingModalWithDoctor(${doctor.id})" style="margin-top: 10px; width: 100%;">
+                        Book Now
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function checkAuthAndBookWithDoctor(doctorId) {
+            if (!currentUser) {
+                showLoginRequired('Please login to book an appointment.');
+                return;
+            }
+            openBookingModalWithDoctor(doctorId);
+        }
+
+        function openBookingModalWithDoctor(doctorId) {
+            openBookingModal();
+            document.getElementById('doctorSelect').value = doctorId;
+        }
+
+        // Dashboard functions
+        function updateDashboard() {
+            if (!currentUser) return;
+            
+            // Update user info in sidebar
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userAvatar').src = currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80';
+            
+            // Update stats
+            const userAppointments = mockData.appointments.filter(a => a.userId === currentUser.id);
+            const upcoming = userAppointments.filter(a => a.status === 'upcoming').length;
+            const total = userAppointments.length;
+            const doctorsSeen = [...new Set(userAppointments.map(a => a.doctorId))].length;
+            
+            document.getElementById('upcomingAppointments').textContent = upcoming;
+            document.getElementById('totalAppointments').textContent = total;
+            document.getElementById('doctorsSeen').textContent = doctorsSeen;
+            
+            // Load upcoming appointments
+            loadDashboardAppointments();
+            
+            // Load available doctors
+            loadDashboardDoctors();
+        }
+
+        function loadDashboardAppointments() {
+            const container = document.getElementById('dashboardAppointments');
+            if (!container || !currentUser) return;
+            
+            const upcomingAppointments = mockData.appointments
+                .filter(a => a.userId === currentUser.id && a.status === 'upcoming')
+                .slice(0, 3);
+            
+            if (upcomingAppointments.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--gray);">No upcoming appointments</p>';
+                return;
+            }
+            
+            container.innerHTML = upcomingAppointments.map(appointment => `
+                <div class="appointment-item slide-in">
+                    <div class="appointment-info">
+                        <h3>${appointment.doctorName}</h3>
+                        <p><strong>${appointment.doctorAlt || 'General Consultation'}</strong></p>
+                        <p><i class="far fa-calendar"></i> ${formatDate(appointment.date)} at ${appointment.time}</p>
+                        <p><i class="fas fa-stethoscope"></i> ${appointment.symptoms}</p>
+                    </div>
+                    <div>
+                        <span class="appointment-status status-${appointment.status}">${appointment.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Appointment functions
+        function loadAppointments() {
+            if (!currentUser) return;
+            
+            filterAppointments('upcoming');
+        }
+
+        function filterAppointments(status) {
+            const container = document.getElementById('appointmentsList');
+            if (!container || !currentUser) return;
+            
+            // Update active tab
+            document.querySelectorAll('.appointments-tabs .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const userAppointments = mockData.appointments.filter(a => a.userId === currentUser.id);
+            const filteredAppointments = status === 'all' 
+                ? userAppointments 
+                : userAppointments.filter(a => a.status === status);
+            
+            if (filteredAppointments.length === 0) {
+                container.innerHTML = `<p style="text-align: center; padding: 40px; color: var(--gray);">No ${status} appointments</p>`;
+                return;
+            }
+            
+            container.innerHTML = filteredAppointments.map(appointment => `
+                <div class="appointment-item slide-in">
+                    <div class="appointment-info">
+                        <h3>${appointment.doctorName}</h3>
+                        <p><strong>${appointment.doctorAlt || 'General Consultation'}</strong></p>
+                        <p><i class="far fa-calendar"></i> ${formatDate(appointment.date)} at ${appointment.time}</p>
+                        <p><i class="fas fa-stethoscope"></i> ${appointment.symptoms}</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span class="appointment-status status-${appointment.status}">${appointment.status}</span>
+                        ${appointment.status === 'upcoming' ? `
+                            <button class="btn btn-danger btn-small" onclick="cancelAppointment(${appointment.id})">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateDoctorSelect() {
+            const select = document.getElementById('doctorSelect');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Choose a doctor</option>' +
+                mockData.doctors.filter(d => d.availability).map(doctor => `
+                    <option value="${doctor.id}" data-alt="${doctor.alt}">
+                        ${doctor.name} - ${doctor.specialty}
+                    </option>
+                `).join('');
+        }
+
+        function populateTimeSlots() {
+            const select = document.getElementById('appointmentTime');
+            const timeSlots = [
+                '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', 
+                '11:00 AM', '11:30 AM', '1:00 PM', '1:30 PM',
+                '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM',
+                '4:00 PM', '4:30 PM'
+            ];
+            
+            select.innerHTML = '<option value="">Select time</option>' +
+                timeSlots.map(time => `<option value="${time}">${time}</option>`).join('');
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').min = today;
+            
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('appointmentDate').value = tomorrow.toISOString().split('T')[0];
+        }
+
+        function bookAppointment(event) {
+            event.preventDefault();
+            
+            const doctorId = parseInt(document.getElementById('doctorSelect').value);
+            const date = document.getElementById('appointmentDate').value;
+            const time = document.getElementById('appointmentTime').value;
+            const symptoms = document.getElementById('symptoms').value;
+            
+            const doctor = mockData.doctors.find(d => d.id === doctorId);
+            const selectedOption = document.querySelector(`#doctorSelect option[value="${doctorId}"]`);
+            const doctorAlt = selectedOption ? selectedOption.dataset.alt : doctor.specialty;
+            
+            const newAppointment = {
+                id: mockData.appointments.length + 1,
+                userId: currentUser.id,
+                doctorId: doctorId,
+                doctorName: doctor.name,
+                doctorAlt: doctorAlt,
+                date: date,
+                time: time,
+                symptoms: symptoms || 'Not specified',
+                status: 'upcoming'
+            };
+            
+            mockData.appointments.push(newAppointment);
+            localStorage.setItem('appointments', JSON.stringify(mockData.appointments));
+            
+            showToast('Appointment booked successfully!', 'success');
+            closeBookingModal();
+            
+            // Update dashboard and appointments page
+            updateDashboard();
+            if (currentPage === 'appointments') {
+                filterAppointments('upcoming');
+            }
+            
+            // Clear form
+            document.getElementById('bookingForm').reset();
+        }
+
+        function cancelAppointment(appointmentId) {
+            if (confirm('Are you sure you want to cancel this appointment?')) {
+                const appointment = mockData.appointments.find(a => a.id === appointmentId);
+                appointment.status = 'cancelled';
+                localStorage.setItem('appointments', JSON.stringify(mockData.appointments));
+                
+                showToast('Appointment cancelled', 'info');
+                
+                // Update UI
+                updateDashboard();
+                filterAppointments('upcoming');
+            }
+        }
+
+        // Utility functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            
+            // Set icon based on type
+            let icon = 'fas fa-info-circle';
+            if (type === 'success') icon = 'fas fa-check-circle';
+            if (type === 'error') icon = 'fas fa-exclamation-circle';
+            if (type === 'warning') icon = 'fas fa-exclamation-triangle';
+            
+            toast.innerHTML = `<i class="${icon}"></i> ${message}`;
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.remove('hidden');
+            }, 10);
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Handle responsive sidebar
+        function checkScreenSize() {
+            const menuToggle = document.getElementById('menuToggle');
+            const appointmentsMenuToggle = document.getElementById('appointmentsMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const appointmentsSidebar = document.getElementById('appointmentsSidebar');
+            
+            if (window.innerWidth <= 768) {
+                if (menuToggle) menuToggle.style.display = 'block';
+                if (appointmentsMenuToggle) appointmentsMenuToggle.style.display = 'block';
+                if (sidebar) sidebar.classList.remove('active');
+                if (appointmentsSidebar) appointmentsSidebar.classList.remove('active');
+                
+                // Update sticky back button position for mobile
+                updateStickyBackButtons();
+            } else {
+                if (menuToggle) menuToggle.style.display = 'none';
+                if (appointmentsMenuToggle) appointmentsMenuToggle.style.display = 'none';
+                if (sidebar) sidebar.classList.remove('active');
+                if (appointmentsSidebar) appointmentsSidebar.classList.remove('active');
+                
+                // Hide sticky back buttons on desktop
+                stickyBackHome.style.display = 'none';
+                stickyBackDashboard.style.display = 'none';
+            }
+        }
+
+        // Event Listeners
+        window.addEventListener('resize', checkScreenSize);
+        window.addEventListener('scroll', handleScroll);
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === document.getElementById('loginModal')) {
+                closeLoginModal();
+            }
+            if (event.target === document.getElementById('bookingModal')) {
+                closeBookingModal();
+            }
+            if (event.target === document.getElementById('loginRequiredOverlay')) {
+                closeLoginRequired();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeLoginModal();
+                closeBookingModal();
+                closeLoginRequired();
+                closeMobileNav();
+            }
+        });
+
+        // Initialize the app
+        window.onload = function() {
+            init();
+            checkScreenSize();
+            handleScroll(); // Initialize scroll state
+        };
+    </script>
+</body>
+</html>
